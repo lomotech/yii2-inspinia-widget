@@ -14,9 +14,10 @@ class InspiniaAsset extends AssetBundle
     /**
      * @inherit
      */
-    public $sourcePath = '@xutl/inspinia/assets';
+    public $sourcePath = '@vendor/xutl/yii2-inspinia-widget/assets';
 
     public $css = [
+        //'css/open-sans.css',
         'css/inspinia.css'
     ];
 
@@ -25,10 +26,12 @@ class InspiniaAsset extends AssetBundle
      */
     public $js = [
         'js/inspinia.js',
-
     ];
 
     public $depends = [
+        'xutl\inspinia\PaceAsset',
         'yii\web\JqueryAsset',
+        'yii\bootstrap\BootstrapPluginAsset',
+        'xutl\fontawesome\Asset',
     ];
 }
