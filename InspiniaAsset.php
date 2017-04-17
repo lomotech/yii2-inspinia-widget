@@ -18,6 +18,7 @@ class InspiniaAsset extends AssetBundle
 
     public $css = [
         //'css/open-sans.css',
+        'css/animate.css',
         'css/inspinia.css'
     ];
 
@@ -25,11 +26,13 @@ class InspiniaAsset extends AssetBundle
      * @inherit
      */
     public $js = [
+        'js/plugins/metisMenu/jquery.metisMenu.js',
+        'js/plugins/slimscroll/jquery.slimscroll.min.js',
         'js/inspinia.js',
+        'js/plugins/pace/pace.min.js',
     ];
 
     public $depends = [
-        'xutl\inspinia\PaceAsset',
         'yii\web\JqueryAsset',
         'yii\bootstrap\BootstrapPluginAsset',
         'xutl\fontawesome\Asset',
