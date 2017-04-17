@@ -33,5 +33,6 @@ class InspiniaAsset extends AssetBundle
         'yii\web\JqueryAsset',
         'yii\bootstrap\BootstrapPluginAsset',
         'xutl\fontawesome\Asset',
+        'yii\web\YiiAsset',
     ];
 }
