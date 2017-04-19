@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use xutl\inspinia\InspiniaAsset;
+use yuncms\admin\widgets\Alert;
 
 $assetBundle = InspiniaAsset::register($this);
 
@@ -33,10 +34,54 @@ $this->title = 'Manage Center';
         <div id="page-wrapper" class="gray-bg">
 
             <!-- Page wrapper -->
-            <?= $this->render('_topnavbar.php', ['assetBundle' => $assetBundle]) ?>
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+
+                            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+
+
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <?= Html::a('<i class="fa fa-sign-out"></i>' . Yii::t('admin', 'Logout'), Url::to(['/admin/security/logout']), [
+                                'title' => Yii::t('admin', 'Sign Out'),
+                                'data' => [
+                                    'method' => 'post',
+                                    'confirm' => Yii::t('admin', 'You can improve your security further after logging out by closing this opened browser')
+                                ]
+                            ]); ?>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
 
             <!-- Main view  -->
-            <?= $content ?>
+            <?php if (isset($this->params['breadcrumbs'])): ?>
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-lg-10">
+                        <?php
+                        $breadcrumbTitle = $this->params['breadcrumbs'][count($this->params['breadcrumbs']) - 1];
+                        if (is_array($breadcrumbTitle)) {
+                            $breadcrumbTitle = $breadcrumbTitle['label'];
+                        } ?>
+                        <h2><?= Html::encode($breadcrumbTitle) ?></h2>
+                        <!-- breadcrumb -->
+                        <?= Breadcrumbs::widget([
+                            'tag' => 'ol',
+                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                        ]) ?>
+                        <!-- end breadcrumb -->
+
+                    </div>
+                    <div class="col-lg-2">
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="wrapper wrapper-content animated fadeIn">
+                <?= Alert::widget() ?>
+                <?= $content ?>
+            </div>
 
             <!-- Footer -->
             <?= $this->render('_footer.php', ['assetBundle' => $assetBundle]) ?>
