@@ -7,7 +7,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use xutl\inspinia\InspiniaAsset;
-use yuncms\admin\widgets\Alert;
+use xutl\inspinia\Alert;
 
 $assetBundle = InspiniaAsset::register($this);
 
@@ -57,7 +57,7 @@ $this->title = 'Manage Center';
             </div>
 
             <!-- Main view  -->
-            <?php if (isset($this->params['breadcrumbs'])): ?>
+            <?php if (isset($this->params['breadcrumbs']) && $this->params['breadcrumbs'] != false): ?>
                 <div class="row wrapper border-bottom white-bg page-heading">
                     <div class="col-lg-10">
                         <?php
@@ -78,10 +78,10 @@ $this->title = 'Manage Center';
                     </div>
                 </div>
             <?php endif; ?>
-            <div class="wrapper wrapper-content animated fadeIn">
+
                 <?= Alert::widget() ?>
                 <?= $content ?>
-            </div>
+
 
             <!-- Footer -->
             <?= $this->render('_footer.php', ['assetBundle' => $assetBundle]) ?>
