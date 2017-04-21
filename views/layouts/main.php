@@ -28,7 +28,7 @@ $this->title = 'Manage Center';
     <div id="wrapper">
 
         <!-- Navigation -->
-        <?= $this->render('_sidebar.php', ['assetBundle' => $assetBundle]) ?>
+        <?= $this->render('_navigation.php', ['assetBundle' => $assetBundle]) ?>
 
         <!-- Page wraper -->
         <div id="page-wrapper" class="gray-bg">
