@@ -80,6 +80,7 @@ $this->title = 'Manage Center';
             <?php endif; ?>
 
                 <?= Alert::widget() ?>
+                <!-- Content view  -->
                 <?= $content ?>
 
 
