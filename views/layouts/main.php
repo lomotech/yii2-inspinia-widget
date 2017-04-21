@@ -5,9 +5,8 @@
 
 use yii\helpers\Url;
 use yii\helpers\Html;
-use yii\widgets\Breadcrumbs;
 use xutl\inspinia\InspiniaAsset;
-use xutl\inspinia\Alert;
+
 
 $assetBundle = InspiniaAsset::register($this);
 
@@ -37,10 +36,8 @@ $this->title = 'Manage Center';
             <div class="row border-bottom">
                 <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header">
-
-                            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-
-
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
+                                    class="fa fa-bars"></i> </a>
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
@@ -57,33 +54,10 @@ $this->title = 'Manage Center';
             </div>
 
             <!-- Main view  -->
-            <?php if (isset($this->params['breadcrumbs']) && $this->params['breadcrumbs'] != false): ?>
-                <div class="row wrapper border-bottom white-bg page-heading">
-                    <div class="col-lg-10">
-                        <?php
-                        $breadcrumbTitle = $this->params['breadcrumbs'][count($this->params['breadcrumbs']) - 1];
-                        if (is_array($breadcrumbTitle)) {
-                            $breadcrumbTitle = $breadcrumbTitle['label'];
-                        } ?>
-                        <h2><?= Html::encode($breadcrumbTitle) ?></h2>
-                        <!-- breadcrumb -->
-                        <?= Breadcrumbs::widget([
-                            'tag' => 'ol',
-                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                        ]) ?>
-                        <!-- end breadcrumb -->
+            <?= $this->render('_breadcrumb.php', ['assetBundle' => $assetBundle]) ?>
 
-                    </div>
-                    <div class="col-lg-2">
-                    </div>
-                </div>
-            <?php endif; ?>
-
-                <?= Alert::widget() ?>
-                <!-- Content view  -->
-                <?= $content ?>
-
-
+            <!-- Content view  -->
+            <?= $content ?>
             <!-- Footer -->
             <?= $this->render('_footer.php', ['assetBundle' => $assetBundle]) ?>
 

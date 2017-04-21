@@ -17,9 +17,8 @@ class InspiniaAsset extends AssetBundle
     public $sourcePath = '@vendor/xutl/yii2-inspinia-widget/assets';
 
     public $css = [
-        //'css/open-sans.css',
         'css/animate.css',
-        'css/inspinia.css'
+        'css/style.css'
     ];
 
     /**

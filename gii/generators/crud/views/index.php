@@ -14,7 +14,9 @@ echo "<?php\n";
 use yii\web\View;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use yuncms\admin\widgets\Jarvis;
+use xutl\inspinia\Box;
+use xutl\inspinia\Toolbar;
+use xutl\inspinia\Alert;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 <?= $generator->enablePjax ? 'use yii\widgets\Pjax;' : '' ?>
 
@@ -25,45 +27,52 @@ use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\w
 $this->title = <?= $generator->generateString('Manage ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>;
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerJs("jQuery(\"#batch_deletion\").on(\"click\", function () {
-    yii.confirm('".Yii::t('app', 'Are you sure you want to delete this item?')."',function(){
+    yii.confirm('" . Yii::t('app', 'Are you sure you want to delete this item?')."',function(){
         var ids = jQuery('#gridview').yiiGridView(\"getSelectedRows\");
         jQuery.post(\"/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/batch-delete\",{ids:ids});
     });
 });", View::POS_LOAD);
 ?>
-<section id="widget-grid">
+<div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12 <?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-index">
+        <div class="col-lg-12 <?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-index">
+            <?= "<?= " ?>Alert::widget() ?>
             <?= $generator->enablePjax ? '<?php Pjax::begin(); ?>' : '' ?>
                 <?php if ($generator->indexWidgetType === 'grid'): ?>
 
-            <?= "<?php " ?>Jarvis::begin([
-                'noPadding' => true,
-                'editbutton' => false,
-                'deletebutton' => false,
+            <?= "<?php " ?>Box::begin([
+                //'noPadding' => true,
                 'header' => Html::encode($this->title),
-                'bodyToolbarActions' => [
-                    [
-                        'label' => <?= $generator->generateString('Manage ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                        'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/index'],
-                    ],
-                    [
-                        'label' => <?= $generator->generateString('Create ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                        'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/create'],
-                    ],
-                    [
-                        'options' => ['id' => 'batch_deletion','class'=>'btn btn-sm btn-danger'],
-                        'label' => <?= $generator->generateString('Batch Deletion');?>,
-                        'url' => 'javascript:void(0);',
-                    ]
-                ]
             ]); ?>
+            <div class="row">
+                <div class="col-sm-4 m-b-xs">
+                    <?= "<?= " ?>Toolbar::widget(['items' => [
+                        [
+                            'label' => <?= $generator->generateString('Manage ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
+                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/index'],
+                        ],
+                        [
+                            'label' => <?= $generator->generateString('Create ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
+                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/create'],
+                        ],
+                        [
+                            'options' => ['id' => 'batch_deletion', 'class'=>'btn btn-sm btn-danger'],
+                            'label' => <?= $generator->generateString('Batch Deletion');?>,
+                            'url' => 'javascript:void(0);',
+                        ]
+                    ]]); ?>
+                </div>
+                <div class="col-sm-8 m-b-xs">
+                    <?= "<?= " ?>$this->render('_search', ['model' => $searchModel]); ?>
+                </div>
+            </div>
 <?php if(!empty($generator->searchModelClass)): ?>
            <?= " <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php endif; ?>
             <?= "<?= " ?>GridView::widget([
                 'dataProvider' => $dataProvider,
                 'options' => ['id' => 'gridview'],
+                'layout' => "{items}\n{summary}\n{pager}",
                 <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n                'columns' => [\n" : "'columns' => [\n"; ?>
                     [
                         'class' => 'yii\grid\CheckboxColumn',
@@ -93,7 +102,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 ?>
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => Yii::t('app', 'Operation'),
+                        'header' => <?= $generator->generateString('Operation');?>,
                         'template' => '{view} {update} {delete}',
                         //'buttons' => [
                         //    'update' => function ($url, $model, $key) {
@@ -103,10 +112,11 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
                     ],
                 ],
             ]); ?>
-            <?= "<?php " ?>Jarvis::end(); ?>
+            <?= "<?php " ?>Box::end(); ?>
             <?php else: ?>
                 <?= "<?= " ?>ListView::widget([
                     'dataProvider' => $dataProvider,
+                    'layout' => "{items}\n{summary}\n{pager}",
                     'itemOptions' => ['class' => 'item'],
                     'itemView' => function ($model, $key, $index, $widget) {
                         return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
@@ -114,6 +124,6 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
                 ]) ?>
             <?php endif; ?><?= $generator->enablePjax ? '<?php Pjax::end(); ?>' : '' ?>
 
-        </article>
+        </div>
     </div>
-</section>
+</div>
