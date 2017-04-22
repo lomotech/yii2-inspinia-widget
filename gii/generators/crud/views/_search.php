@@ -17,7 +17,7 @@ use xutl\inspinia\ActiveForm;
 /* @var $form ActiveForm */
 ?>
 
-<div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-search">
+<div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-search pull-right">
 
     <?= "<?php " ?>$form = ActiveForm::begin([
         'layout' => 'inline',
@@ -28,7 +28,7 @@ use xutl\inspinia\ActiveForm;
 <?php
 $count = 0;
 foreach ($generator->getColumnNames() as $attribute) {
-    if (++$count < 3) {
+    if (++$count < 4) {
         echo "    <?= " . $generator->generateActiveSearchField($attribute) . " ?>\n\n";
     } else {
         echo "    <?php // echo " . $generator->generateActiveSearchField($attribute) . " ?>\n\n";

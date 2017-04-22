@@ -36,11 +36,11 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                     <?= "<?= " ?>Toolbar::widget(['items' => [
                         [
                             'label' => <?= $generator->generateString('Manage ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/index'],
+                            'url' => ['index'],
                         ],
                         [
                             'label' => <?= $generator->generateString('Create ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/create'],
+                            'url' => ['create'],
                         ],
                     ]]); ?>
                 </div>

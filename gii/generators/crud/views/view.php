@@ -36,20 +36,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= "<?= " ?>Toolbar::widget(['items' => [
                         [
                             'label' => <?= $generator->generateString('Manage ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/index'],
+                            'url' => ['index'],
                         ],
                         [
                             'label' => <?= $generator->generateString('Create ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/create'],
+                            'url' => ['create'],
                         ],
                         [
                             'label' => <?= $generator->generateString('Update ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/update', 'id' => $model->id],
+                            'url' => ['update', 'id' => $model->id],
                             'options' => ['class' => 'btn btn-primary btn-sm']
                         ],
                         [
                             'label' => <?= $generator->generateString('Delete ' . Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>,
-                            'url' => ['/<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>/delete', 'id' => $model->id],
+                            'url' => ['delete', 'id' => $model->id],
                             'options' => [
                                 'class' => 'btn btn-danger btn-sm',
                                 'data' => [
