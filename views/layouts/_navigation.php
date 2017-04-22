@@ -9,10 +9,6 @@ $menus = MenuHelper::getAssignedMenu(Yii::$app->user->getId());
             'top' => $this->render(
                 '_navigation_header.php'
             ),
-            'options' => [
-                'class' => 'nav metismenu',
-                'id' => 'side-menu',
-            ],
             'items' => $menus
         ]) ?>
     </div>

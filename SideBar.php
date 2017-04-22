@@ -20,6 +20,20 @@ use yii\helpers\ArrayHelper;
  */
 class SideBar extends Menu
 {
+
+    /**
+     * @var array the HTML attributes for the menu's container tag. The following special options are recognized:
+     *
+     * - tag: string, defaults to "ul", the tag name of the item container tags. Set to false to disable container tag.
+     *   See also [[\yii\helpers\Html::tag()]].
+     *
+     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+     */
+    public $options = [
+        'class' => 'nav metismenu',
+        'id' => 'side-menu',
+    ];
+
     /**
      * @var string the template used to render the body of a menu which is a link.
      * In this template, the token `{url}` will be replaced with the corresponding link URL;
