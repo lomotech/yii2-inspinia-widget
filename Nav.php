@@ -15,16 +15,20 @@ use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 
 /**
- * Class SideBar
+ * Class Nav
  * @package backend\widgets
  */
-class SideBar1 extends Widget
+class Nav extends Widget
 {
     /**
      * @var array the HTML attributes for the widget container tag.
      * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
      */
-    public $options = [];
+    public $options = [
+        'class' => 'nav metismenu',
+        'id' => 'side-menu',
+    ];
+
     /**
      * @var array list of items in the nav widget. Each array element represents a single
      * menu item which can be either a string or an array with the following structure:
@@ -53,6 +57,28 @@ class SideBar1 extends Widget
      * @var boolean whether to activate parent menu items when one of the corresponding child menu items is active.
      */
     public $activateParents = true;
+
+    /**
+     * @var string the template used to render the body of a menu which is a link.
+     * In this template, the token `{url}` will be replaced with the corresponding link URL;
+     * while `{label}` will be replaced with the link text.
+     * This property will be overridden by the `template` option set in individual menu items via [[items]].
+     */
+    public $linkTemplate = '<a href="{url}">{icon} {label}</a>';
+
+    /**
+     * @var string the template used to render a list of sub-menus.
+     * In this template, the token `{items}` will be replaced with the rendered sub-menu items.
+     */
+    public $submenuTemplate = "\n<ul class=\"nav nav-second-level collapse\">\n{items}\n</ul>\n";
+
+    /**
+     * @var string the template used to render the body of a menu which is NOT a link.
+     * In this template, the token `{label}` will be replaced with the label of the menu item.
+     * This property will be overridden by the `template` option set in individual menu items via [[items]].
+     */
+    public $labelTemplate = '{label}';
+
     /**
      * @var string the route used to determine if a menu item is active or not.
      * If not set, it will use the route of the current request.
@@ -68,6 +94,10 @@ class SideBar1 extends Widget
      */
     public $params;
 
+    /**
+     * @var string 头部菜单
+     */
+    public $top;
 
     /**
      * 初始化
@@ -88,8 +118,8 @@ class SideBar1 extends Widget
      */
     public function run()
     {
-        $items = $this->renderItems($this->items);
-        return Html::tag('nav', $items, $this->options);
+        $tag = ArrayHelper::remove($options, 'tag', 'ul');
+        return Html::tag($tag, $this->top . $this->renderItems($this->items), $this->options);
     }
 
     /**
@@ -112,14 +142,17 @@ class SideBar1 extends Widget
                 throw new InvalidConfigException ("The 'label' option is required.");
             }
             $encodeLabel = isset ($item['encode']) ? $item['encode'] : $this->encodeLabels;
-            $label = $encodeLabel ? Html::encode($item['label']) : $item['label'];
-            $label = Html::tag('span', $label, ['class' => 'menu-item-parent']);
-            $label = isset ($item['icon']) ? Html::tag('i', '', ['class' => 'fa fa-lg fa-fw ' . $item['icon']]) . ' ' . $label : $label;
-            $label = isset ($item['badge']) ? $label . ' ' . $item['badge'] : $label;
+
+            if ($item['parent'] == null) {//如果是顶级菜单
+                $item['label'] = $encodeLabel ? Html::tag('span', Html::encode($item['label']), ['class' => 'nav-label']) : $item['label'];
+            } else {
+                $item['label'] = $encodeLabel ? Html::encode($item['label']) : $item['label'];
+            }
+
+            $item['icon'] = isset ($item['icon']) ? Html::tag('i', '', ['class' => 'fa fa-lg fa-fw ' . $item['icon']]) : '';
+
             $options = ArrayHelper::getValue($item, 'options', []);
             $subItems = ArrayHelper::getValue($item, 'items');
-            $url = ArrayHelper::getValue($item, 'url', '#');
-            $linkOptions = ArrayHelper::getValue($item, 'linkOptions', []);
             if (isset ($item['active'])) {
                 $active = ArrayHelper::remove($item, 'active', false);
             } else {
@@ -130,10 +163,18 @@ class SideBar1 extends Widget
                 if ($this->activateItems) {
                     $subItems = $this->isChildActive($subItems, $active);
                     if ($active) { //如果被激活则父菜单是打开状态
-                        Html::addCssClass($options, 'open');
+                        Html::addCssClass($options, 'active');
                     }
                 }
+
                 $subItems = $this->renderItems($subItems);
+                if($subItems){
+                    $submenuTemplate = ArrayHelper::getValue($item, 'submenuTemplate', $this->submenuTemplate);
+                    $subItems = strtr($submenuTemplate, [
+                        '{items}' => $this->renderItems($subItems),
+                    ]);
+                }
+
             }
             if ($this->activateItems && $active) {//无子菜单则激活当前菜单
                 Html::addCssClass($options, 'active');
@@ -144,12 +185,43 @@ class SideBar1 extends Widget
             if ($subItems == null) {
                 Html::removeCssClass($options, 'open');
             }
-            $lines[] = Html::tag('li', Html::a($label, $url, $linkOptions) . $subItems, $options);
+            $menu = $this->renderItem($item);
+            $lines[] = Html::tag('li', $menu . $subItems, $options);
         }
         if (empty($lines)) {
             return null;
         }
-        return Html::tag('ul', implode("\n", $lines));
+        return implode("\n", $lines);
+    }
+
+    /**
+     * Renders the content of a menu item.
+     * Note that the container and the sub-menus are not rendered here.
+     * @param array $item the menu item to be rendered. Please refer to [[items]] to see what data might be in the item.
+     * @return string the rendering result
+     */
+    protected function renderItem($item)
+    {
+        if ($item['parent'] == null && isset($item['items'])) {//如果是顶级菜单并且有子菜单
+            $linkTemplate = '<a href="{url}">{icon} {label} <span class="fa arrow"></span></a>';
+        } else {
+            $linkTemplate = $this->linkTemplate;
+        }
+        if (isset($item['url'])) {
+            $template = ArrayHelper::getValue($item, 'template', $linkTemplate);
+
+            return strtr($template, [
+                '{icon}' => $item['icon'],
+                '{url}' => Html::encode(Url::to($item['url'])),
+                '{label}' => $item['label'],
+            ]);
+        } else {
+            $template = ArrayHelper::getValue($item, 'template', $this->labelTemplate);
+
+            return strtr($template, [
+                '{label}' => $item['label'],
+            ]);
+        }
     }
 
     /**

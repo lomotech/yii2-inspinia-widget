@@ -151,7 +151,6 @@ class SideBar extends Menu
         }
     }
 
-
     /**
      * Normalizes the [[items]] property to remove invisible items and activate certain items.
      * @param array $items the items to be normalized.
@@ -177,9 +176,10 @@ class SideBar extends Menu
 
             $items[$i]['icon'] = isset ($item['icon']) ? Html::tag('i', '', ['class' => 'fa fa-lg fa-fw ' . $item['icon']]) : '';
             $hasActiveChild = false;
+            //判断是否有子菜单
             if (isset($item['items'])) {
                 $items[$i]['items'] = $this->normalizeItems($item['items'], $hasActiveChild);
-                if (empty($items[$i]['items']) && $this->hideEmptyItems) {
+                if (empty($items[$i]['items']) && $this->hideEmptyItems) {//隐藏空的子菜单
                     unset($items[$i]['items']);
                     if (!isset($item['url'])) {
                         unset($items[$i]);
