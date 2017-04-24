@@ -23,11 +23,14 @@ use yii\widgets\ActiveForm;
 
     <?php foreach ($generator->getModelAttributes() as $attribute): ?>
     <?= "<?= " ?>$form->field($model, '<?= $attribute ?>') ?>
+        <div class="hr-line-dashed"></div>
     <?php endforeach; ?>
 
-        <div class="form-group">
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-2">
             <?= "<?= " ?>Html::submitButton(<?= $generator->generateString('Submit') ?>, ['class' => 'btn btn-primary']) ?>
         </div>
+    </div>
     <?= "<?php " ?>ActiveForm::end(); ?>
 
 </div><!-- <?= str_replace('/', '-', trim($generator->viewName, '-')) ?> -->
