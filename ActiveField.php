@@ -8,6 +8,7 @@
 namespace xutl\inspinia;
 
 
+use xutl\plupload\Plupload;
 use Yii;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -36,6 +37,20 @@ class ActiveField extends \yii\bootstrap\ActiveField
         $this->parts['{img}'] = Html::img($src, $options);
         FilestyleAsset::register($this->form->view);
         return parent::fileInput($options);
+    }
+
+    public function ajaxUploadInput($options = [])
+    {
+        $this->template = "{label}\n<div class=\"image\">{input}{img}\n{error}</div>\n{hint}";
+        $value = Html::getAttributeValue($this->model, $this->attribute);
+        if ($value) {
+            $src = Yii::$app->getModule('attachment')->getUrl($value);
+        } else {
+            $src = Yii::$app->getModule('attachment')->getUrl('/images/none.jpg');
+        }
+        $this->parts['{img}'] = Html::img($src, $options);
+        FilestyleAsset::register($this->form->view);
+        return parent::fileInput($options).Plupload::widget(['url'=>'url']);
     }
 
     /**
