@@ -19,6 +19,7 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use Yii;
+use yuncms\system\helpers\DateHelper;
 
 /**
  * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
@@ -94,6 +95,32 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     public static function find()
     {
         return new <?= $queryClassFullName ?>(get_called_class());
+    }
+
+    /**
+     * @inheritdoc
+     * @param null|int $duration 缓存时间
+     * @return int get the model rows
+     */
+    public static function getTotal()
+    {
+        $total = static::getDb()->cache(function ($db) {
+            return static::find()->count();
+        }, $duration);
+        return $total;
+    }
+
+    /**
+     * @inheritdoc
+     * @param null|int $duration 缓存时间
+     * @return int
+     */
+    public static function getTodayTotal($duration = null)
+    {
+        $total = static::getDb()->cache(function ($db) {
+            return static::find()->where(['between', 'created_at', DateHelper::todayFirstSecond(), DateHelper::todayLastSecond()])->count();
+        }, $duration);
+        return $total;
     }
 <?php endif; ?>
 }
