@@ -10,11 +10,17 @@ use yii\helpers\Html;
                             <span class="block m-t-xs">
                                 <strong class="font-bold"> <?=Yii::$app->user->identity->username?> </strong>
                             </span>
-                            <span class="text-muted text-xs block">Example menu <b class="caret"></b></span>
+                            <span class="text-muted text-xs block"><?=Yii::t('admin', 'Operating')?> <b class="caret"></b></span>
                         </span>
         </a>
         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-            <li><a href="#">退出</a></li>
+            <li><?= Html::a(Yii::t('admin', 'Logout'), Url::to(['/admin/security/logout']), [
+                'title' => Yii::t('admin', 'Sign Out'),
+                'data' => [
+                    'method' => 'post',
+                    'confirm' => Yii::t('admin', 'You can improve your security further after logging out by closing this opened browser')
+                ]
+            ]); ?></li>
         </ul>
     </div>
     <div class="logo-element">
