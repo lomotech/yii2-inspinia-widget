@@ -3,9 +3,9 @@
 
 <div class="footer">
     <div class="pull-right">
-        Example text
+        TintSoft
     </div>
     <div>
-        <strong>Copyright</strong> Example Company &copy; 2014-2017
+        <strong>Copyright</strong> <?=Yii::$app->name?> &copy; 2014-<?=date('Y')?>
     </div>
 </div>
