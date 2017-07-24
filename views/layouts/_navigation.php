@@ -2,7 +2,7 @@
 use xutl\inspinia\Nav;
 use xutl\inspinia\SideBar;
 use yuncms\admin\helpers\MenuHelper;
-$menus = MenuHelper::getAssignedMenu(Yii::$app->user->getId());
+$menus = MenuHelper::getAssignedMenu(Yii::$app->user->id);
 ?>
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
