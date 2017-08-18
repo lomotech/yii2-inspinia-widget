@@ -8,7 +8,7 @@ use yii\helpers\Html;
         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <span class="clear">
                             <span class="block m-t-xs">
-                                <strong class="font-bold"> <?=Yii::$app->user->identity->name?> </strong>
+                                <strong class="font-bold"> <?=Yii::$app->user->identity->username?> </strong>
                             </span>
                             <span class="text-muted text-xs block"><?=Yii::t('admin', 'Operating')?> <b class="caret"></b></span>
                         </span>
