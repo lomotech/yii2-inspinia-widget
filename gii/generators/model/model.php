@@ -102,7 +102,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
      * @param null|int $duration 缓存时间
      * @return int get the model rows
      */
-    public static function getTotal()
+    public static function getTotal($duration = null)
     {
         $total = static::getDb()->cache(function ($db) {
             return static::find()->count();
