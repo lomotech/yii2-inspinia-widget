@@ -41,6 +41,7 @@ class <?= $className ?> extends \yii\base\Module
 
     /**
      * register translations
+     * @return void
      */
     public function registerTranslations()
     {

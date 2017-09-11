@@ -19,6 +19,7 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yuncms\system\helpers\DateHelper;
 
 /**
@@ -33,7 +34,7 @@ use yuncms\system\helpers\DateHelper;
  * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?>
 <?php endforeach; ?>
 <?php endif; ?>
-* @property-read bool isAuthor 是否是作者
+ * @property-read bool isAuthor 是否是作者
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
@@ -67,7 +68,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
 //                ],
 //            ]
 //        ];
-//    }
+    }
 
     /**
      * @inheritdoc
@@ -144,56 +145,56 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
         return $this->user_id == Yii::$app->user->id;
     }
 
-    public function afterFind()
-    {
-        parent::afterFind();
-        // ...custom code here...
-    }
+//    public function afterFind()
+//    {
+//        parent::afterFind();
+//        // ...custom code here...
+//    }
 
     /**
      * @inheritdoc
      */
-    public function beforeSave($insert)
-    {
-        if (!parent::beforeSave($insert)) {
-            return false;
-        }
-
-        // ...custom code here...
-        return true;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes)
-
-        // ...custom code here...
-    }
+//    public function beforeSave($insert)
+//    {
+//        if (!parent::beforeSave($insert)) {
+//            return false;
+//        }
+//
+//        // ...custom code here...
+//        return true;
+//    }
 
     /**
      * @inheritdoc
      */
-    public function beforeDelete()
-    {
-        if (!parent::beforeDelete()) {
-            return false;
-        }
-        // ...custom code here...
-        return true;
-    }
+//    public function afterSave($insert, $changedAttributes)
+//    {
+//        parent::afterSave($insert, $changedAttributes)
+//
+//        // ...custom code here...
+//    }
 
     /**
      * @inheritdoc
      */
-    public function afterDelete()
-    {
-        parent::afterDelete()
+//    public function beforeDelete()
+//    {
+//        if (!parent::beforeDelete()) {
+//            return false;
+//        }
+//        // ...custom code here...
+//        return true;
+//    }
 
-        // ...custom code here...
-    }
+    /**
+     * @inheritdoc
+     */
+//    public function afterDelete()
+//    {
+//        parent::afterDelete();
+//
+//        // ...custom code here...
+//    }
 
     /**
      * @inheritdoc
