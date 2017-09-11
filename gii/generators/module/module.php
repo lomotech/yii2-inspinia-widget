@@ -16,6 +16,8 @@ echo "<?php\n";
 
 namespace <?= $ns ?>;
 
+use Yii;
+
 /**
  * <?= $generator->moduleID ?> module definition class
  */
@@ -32,7 +34,21 @@ class <?= $className ?> extends \yii\base\Module
     public function init()
     {
         parent::init();
+        $this->registerTranslations();
 
         // custom initialization code goes here
     }
+
+    /**
+     * register translations
+     */
+    public function registerTranslations()
+    {
+        Yii::$app->i18n->translations['<?= $generator->moduleID ?>*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => __DIR__ . '/messages',
+        ];
+    }
+
 }

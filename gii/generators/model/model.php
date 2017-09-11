@@ -33,9 +33,15 @@ use yuncms\system\helpers\DateHelper;
  * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?>
 <?php endforeach; ?>
 <?php endif; ?>
+* @property-read bool isAuthor 是否是作者
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
+
+    const SCENARIO_CREATE = 'create';
+
+    const SCENARIO_UPDATE = 'update';
+
     /**
      * @inheritdoc
      */
@@ -43,6 +49,38 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     {
         return '<?= $generator->generateTableName($tableName) ?>';
     }
+
+    /**
+     * 定时行为
+     */
+    public function behaviors()
+    {
+        return parent::behaviors();
+//        return [
+//            [
+//                'class' => 'yii\behaviors\TimestampBehavior',
+//            ],
+//            [
+//                'class' => BlameableBehavior::className(),
+//                'attributes' => [
+//                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
+//                ],
+//            ]
+//        ];
+//    }
+
+    /**
+     * @inheritdoc
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        return ArrayHelper::merge($scenarios, [
+            static::SCENARIO_CREATE => [],
+            static::SCENARIO_UPDATE => [],
+        ]);
+    }
+
 <?php if ($generator->db !== 'db'): ?>
 
     /**
@@ -95,6 +133,66 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     public static function find()
     {
         return new <?= $queryClassFullName ?>(get_called_class());
+    }
+
+    /**
+     * 是否是作者
+     * @return bool
+     */
+    public function getIsAuthor()
+    {
+        return $this->user_id == Yii::$app->user->id;
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        // ...custom code here...
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        // ...custom code here...
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes)
+
+        // ...custom code here...
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+        // ...custom code here...
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete()
+
+        // ...custom code here...
     }
 
     /**
