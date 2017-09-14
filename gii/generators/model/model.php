@@ -19,7 +19,10 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use Yii;
+use <?= $generator->baseClass?>;
 use yii\helpers\ArrayHelper;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 use yuncms\system\helpers\DateHelper;
 
 /**
@@ -34,14 +37,28 @@ use yuncms\system\helpers\DateHelper;
  * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?>
 <?php endforeach; ?>
 <?php endif; ?>
+ *
  * @property-read bool isAuthor 是否是作者
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
 
-    const SCENARIO_CREATE = 'create';
+    //场景定义
+    const SCENARIO_CREATE = 'create';//创建
+    const SCENARIO_UPDATE = 'update';//更新
 
-    const SCENARIO_UPDATE = 'update';
+    //状态定义
+    const STATUS_DRAFT = 'draft';//草稿
+    const STATUS_REVIEW = 'review';//审核
+    const STATUS_REJECTED = 'rejected';//拒绝
+    const STATUS_PUBLISHED = 'published';//发布
+
+    //事件定义
+    const BEFORE_PUBLISHED = 'beforePublished';
+    const AFTER_PUBLISHED = 'afterPublished';
+    const BEFORE_REJECTED = 'beforeRejected';
+    const AFTER_REJECTED = 'afterRejected';
+
 
     /**
      * @inheritdoc
@@ -52,14 +69,14 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     }
 
     /**
-     * 定时行为
+     * 定义行为
      */
     public function behaviors()
     {
         return parent::behaviors();
 //        return [
 //            [
-//                'class' => 'yii\behaviors\TimestampBehavior',
+//                'class' => TimestampBehavior::className(),
 //            ],
 //            [
 //                'class' => BlameableBehavior::className(),
@@ -145,6 +162,31 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
         return $this->user_id == Yii::$app->user->id;
     }
 
+    /**
+     * 审核通过
+     * @return int
+     */
+    public function setPublished()
+    {
+        $this->trigger(self::BEFORE_PUBLISHED);
+        $rows = $this->updateAttributes(['status' => static::STATUS_PUBLISHED, 'published_at' => time()]);
+        $this->trigger(self::AFTER_PUBLISHED);
+        return $rows;
+    }
+
+    /**
+     * 拒绝通过
+     * @param string $failedReason 拒绝原因
+     * @return int
+     */
+    public function setRejected($failedReason)
+    {
+        $this->trigger(self::BEFORE_REJECTED);
+        $rows = $this->updateAttributes(['status' => static::STATUS_REJECTED, 'failed_reason' => $failedReason]);
+        $this->trigger(self::AFTER_REJECTED);
+        return $rows;
+    }
+
 //    public function afterFind()
 //    {
 //        parent::afterFind();
@@ -197,7 +239,28 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
 //    }
 
     /**
-     * @inheritdoc
+     * 生成一个独一无二的标识
+     */
+    protected function generateKey()
+    {
+        $result = sprintf("%u", crc32($this->id));
+        $key = '';
+        while ($result > 0) {
+            $s = $result % 62;
+            if ($s > 35) {
+                $s = chr($s + 61);
+            } elseif ($s > 9 && $s <= 35) {
+                $s = chr($s + 55);
+            }
+            $key .= $s;
+            $result = floor($result / 62);
+        }
+        //return date('YmdHis') . $key;
+        return $key;
+    }
+
+    /**
+     * 获取模型总数
      * @param null|int $duration 缓存时间
      * @return int get the model rows
      */
@@ -210,7 +273,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     }
 
     /**
-     * @inheritdoc
+     * 获取模型今日新增总数
      * @param null|int $duration 缓存时间
      * @return int
      */
