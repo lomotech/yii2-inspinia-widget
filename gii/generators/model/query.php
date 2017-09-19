@@ -36,6 +36,11 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->queryBaseClass, '\\
         return $this->andWhere('[[status]]=1');
     }*/
 
+    /*public function active()
+    {
+        return $this->andWhere(['status' => <?= $modelFullClassName ?>::STATUS_PUBLISHED]);
+    }*/
+
     /**
      * @inheritdoc
      * @return <?= $modelFullClassName ?>[]|array

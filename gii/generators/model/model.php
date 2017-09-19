@@ -24,6 +24,7 @@ use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yuncms\system\helpers\DateHelper;
+use yuncms\system\ScanInterface;
 
 /**
  * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
@@ -40,7 +41,7 @@ use yuncms\system\helpers\DateHelper;
  *
  * @property-read bool isAuthor 是否是作者
  */
-class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
+class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?> implements ScanInterface
 {
 
     //场景定义
@@ -163,6 +164,32 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     }
 
     /**
+     * 机器审核
+     * @param string $suggestion the ID to be looked for
+     * @return void
+     */
+    public static function review($suggestion)
+    {
+        if ($suggestion == 'pass') {
+            $this->setPublished();
+        } elseif ($suggestion == 'block') {
+            $this->setRejected();
+        } elseif ($suggestion == 'review') { //人工审核，不做处理
+
+        }
+    }
+
+    /**
+     * 获取待审
+     * @param int $id
+     * @return string 待审核的内容字符串
+     */
+    public static function findReview($id)
+    {
+        return null;
+    }
+
+    /**
      * 审核通过
      * @return int
      */
@@ -211,8 +238,13 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
      */
 //    public function afterSave($insert, $changedAttributes)
 //    {
-//        parent::afterSave($insert, $changedAttributes)
-//
+//        parent::afterSave($insert, $changedAttributes);
+//        Yii::$app->queue->push(new ScanTextJob([
+//            'modelId' => $this->getPrimaryKey(),
+//            'modelClass' => get_class($this),
+//            'scenario' => $this->isNewRecord ? 'new' : 'edit',
+//            'category'=>'',
+//        ]));
 //        // ...custom code here...
 //    }
 
