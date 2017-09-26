@@ -165,17 +165,20 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
 
     /**
      * 机器审核
+     * @param int $id model id
      * @param string $suggestion the ID to be looked for
      * @return void
      */
-    public static function review($suggestion)
+    public static function review($id, $suggestion)
     {
-        if ($suggestion == 'pass') {
-            $this->setPublished();
-        } elseif ($suggestion == 'block') {
-            $this->setRejected();
-        } elseif ($suggestion == 'review') { //人工审核，不做处理
+        if (($model = static::findOne($id)) != null) {
+            if ($suggestion == 'pass') {
+                $model->setPublished();
+            } elseif ($suggestion == 'block') {
+                $model->setRejected('');
+            } elseif ($suggestion == 'review') { //人工审核，不做处理
 
+            }
         }
     }
 
@@ -186,6 +189,9 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
      */
     public static function findReview($id)
     {
+        if (($model = static::findOne($id)) != null) {
+            return $model->content;
+        }
         return null;
     }
 
