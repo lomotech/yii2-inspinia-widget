@@ -40,6 +40,8 @@ use yuncms\system\ScanInterface;
 <?php endif; ?>
  *
  * @property-read bool isAuthor 是否是作者
+ * @property-read boolean $isDraft 是否草稿
+ * @property-read boolean $isPublished 是否发布
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?> implements ScanInterface
 {
@@ -49,10 +51,10 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     const SCENARIO_UPDATE = 'update';//更新
 
     //状态定义
-    const STATUS_DRAFT = 'draft';//草稿
-    const STATUS_REVIEW = 'review';//审核
-    const STATUS_REJECTED = 'rejected';//拒绝
-    const STATUS_PUBLISHED = 'published';//发布
+    const STATUS_DRAFT = 0;//草稿
+    const STATUS_REVIEW = 1;//审核
+    const STATUS_REJECTED = 2;//拒绝
+    const STATUS_PUBLISHED = 3;//发布
 
     //事件定义
     const BEFORE_PUBLISHED = 'beforePublished';
@@ -164,6 +166,24 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     }
 
     /**
+     * 是否草稿状态
+     * @return bool
+     */
+    public function isDraft()
+    {
+        return $this->status == static::STATUS_DRAFT;
+    }
+
+    /**
+     * 是否发布状态
+     * @return bool
+     */
+    public function isPublished()
+    {
+        return $this->status == static::STATUS_PUBLISHED;
+    }
+
+    /**
      * 机器审核
      * @param int $id model id
      * @param string $suggestion the ID to be looked for
@@ -218,6 +238,20 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
         $rows = $this->updateAttributes(['status' => static::STATUS_REJECTED, 'failed_reason' => $failedReason]);
         $this->trigger(self::AFTER_REJECTED);
         return $rows;
+    }
+
+    /**
+     * 获取状态列表
+     * @return array
+     */
+    public static function getStatusList()
+    {
+        return [
+            self::STATUS_DRAFT => Yii::t('<?=$this->messageCategory?>', 'Draft'),
+            self::STATUS_REVIEW => Yii::t('<?=$this->messageCategory?>', 'Review'),
+            self::STATUS_REJECTED => Yii::t('<?=$this->messageCategory?>', 'Rejected'),
+            self::STATUS_PUBLISHED => Yii::t('<?=$this->messageCategory?>', 'Published'),
+        ];
     }
 
 //    public function afterFind()
