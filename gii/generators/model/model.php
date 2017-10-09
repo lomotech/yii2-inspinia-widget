@@ -313,10 +313,10 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
     /**
      * 生成一个独一无二的标识
      */
-    protected function generateKey()
+    protected function generateSlug()
     {
         $result = sprintf("%u", crc32($this->id));
-        $key = '';
+        $slug = '';
         while ($result > 0) {
             $s = $result % 62;
             if ($s > 35) {
@@ -324,11 +324,11 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
             } elseif ($s > 9 && $s <= 35) {
                 $s = chr($s + 55);
             }
-            $key .= $s;
+            $slug .= $s;
             $result = floor($result / 62);
         }
-        //return date('YmdHis') . $key;
-        return $key;
+        //return date('YmdHis') . $slug;
+        return $slug;
     }
 
     /**
