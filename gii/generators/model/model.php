@@ -43,7 +43,7 @@ use yuncms\system\ScanInterface;
  * @property-read boolean $isDraft 是否草稿
  * @property-read boolean $isPublished 是否发布
  */
-class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?> implements ScanInterface
+class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?> implements ScanInterface
 {
 
     //场景定义
