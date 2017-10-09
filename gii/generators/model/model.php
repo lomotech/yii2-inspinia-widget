@@ -247,10 +247,10 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     public static function getStatusList()
     {
         return [
-            self::STATUS_DRAFT => Yii::t('<?=$this->messageCategory?>', 'Draft'),
-            self::STATUS_REVIEW => Yii::t('<?=$this->messageCategory?>', 'Review'),
-            self::STATUS_REJECTED => Yii::t('<?=$this->messageCategory?>', 'Rejected'),
-            self::STATUS_PUBLISHED => Yii::t('<?=$this->messageCategory?>', 'Published'),
+            self::STATUS_DRAFT => Yii::t('<?=$generator->messageCategory?>', 'Draft'),
+            self::STATUS_REVIEW => Yii::t('<?=$generator->messageCategory?>', 'Review'),
+            self::STATUS_REJECTED => Yii::t('<?=$generator->messageCategory?>', 'Rejected'),
+            self::STATUS_PUBLISHED => Yii::t('<?=$generator->messageCategory?>', 'Published'),
         ];
     }
 
