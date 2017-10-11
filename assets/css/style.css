@@ -306,6 +306,14 @@ body.mini-navbar .navbar-default .nav > li > .nav-second-level li a {
   background: #fff;
   color: #1cc09f;
 }
+.logo-element-main {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  display: block;
+  /*padding: 18px 0;*/
+}
 .logo-element {
   text-align: center;
   font-size: 18px;
@@ -404,6 +412,12 @@ body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .nav-second-level {
 }
 body.mini-navbar .navbar-default .nav > li > a {
   font-size: 16px;
+}
+body.mini-navbar .logo-element-main {
+  display: none;
+}
+body.canvas-menu .logo-element-main {
+  display: block;
 }
 body.mini-navbar .logo-element {
   display: block;
