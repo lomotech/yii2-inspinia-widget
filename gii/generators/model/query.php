@@ -58,6 +58,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->queryBaseClass, '\\
     {
         return parent::one($db);
     }
+<?php if(isset($labels['created_at'])): ?>
 
     /**
      * 热门模型
@@ -114,5 +115,5 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->queryBaseClass, '\\
     {
         return $this->andWhere('quarter(FROM_UNIXTIME(created_at)) = quarter(curdate())');
     }
-
+<?php endif; ?>
 }

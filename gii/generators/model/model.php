@@ -20,9 +20,22 @@ namespace <?= $generator->ns ?>;
 
 use Yii;
 use <?= $generator->baseClass?>;
+use yii\db\Connection;
+<?php if(isset($labels['slug']) || isset($labels['uuid'])): ?>
+use yii\helpers\Inflector;
+<?php endif; ?>
 use yii\helpers\ArrayHelper;
-use yii\behaviors\BlameableBehavior;
+use yii\caching\DbDependency;
+use yii\caching\ChainedDependency;
+<?php if(isset($labels['created_at'])): ?>
 use yii\behaviors\TimestampBehavior;
+<?php endif; ?>
+<?php if(isset($labels['user_id'])): ?>
+use yii\behaviors\BlameableBehavior;
+<?php endif; ?>
+<?php if(isset($labels['slug']) || isset($labels['uuid'])): ?>
+use yii\behaviors\AttributeBehavior;
+<?php endif; ?>
 use yuncms\system\helpers\DateHelper;
 use yuncms\system\ScanInterface;
 
@@ -51,10 +64,10 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
     const SCENARIO_UPDATE = 'update';//更新
 
     //状态定义
-    const STATUS_DRAFT = 0;//草稿
-    const STATUS_REVIEW = 1;//审核
-    const STATUS_REJECTED = 2;//拒绝
-    const STATUS_PUBLISHED = 3;//发布
+    const STATUS_DRAFT = 0b0;//草稿
+    const STATUS_REVIEW = 0b1;//待审核
+    const STATUS_REJECTED = 0b10;//拒绝
+    const STATUS_PUBLISHED = 0b11;//发布
 
     //事件定义
     const BEFORE_PUBLISHED = 'beforePublished';
@@ -73,21 +86,54 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
 
     /**
      * 定义行为
+     * @return array
      */
     public function behaviors()
     {
-        return parent::behaviors();
-//        return [
-//            [
-//                'class' => TimestampBehavior::className(),
-//            ],
-//            [
-//                'class' => BlameableBehavior::className(),
-//                'attributes' => [
-//                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
-//                ],
-//            ]
-//        ];
+        $behaviors = parent::behaviors();
+<?php if (isset($labels['created_at']) && isset($labels['updated_at'])): ?>
+        $behaviors['timestamp'] = [
+            'class' => TimestampBehavior::className()
+        ];
+<?php elseif(isset($labels['created_at'])): ?>
+        $behaviors['timestamp'] = [
+            'class' => TimestampBehavior::className(),
+            'attributes' => [
+                ActiveRecord::EVENT_BEFORE_INSERT => ['created_at']
+            ],
+        ];
+<?php endif; ?>
+<?php if(isset($labels['user_id'])): ?>
+        $behaviors['user'] = [
+            'class' => BlameableBehavior::className(),
+            'attributes' => [
+                ActiveRecord::EVENT_BEFORE_INSERT => ['user_id']
+            ],
+        ];
+<?php endif; ?>
+<?php if(isset($labels['slug'])): ?>
+        $behaviors['slug'] = [
+            'class' => AttributeBehavior::className(),
+            'attributes' => [
+                ActiveRecord::EVENT_BEFORE_INSERT => ['slug']
+            ],
+            'value' => function ($event) {
+                return Inflector::slug($event->sender->title);
+            }
+        ];
+<?php endif; ?>
+<?php if(isset($labels['uuid'])): ?>
+        $behaviors['uuid'] = [
+            'class' => AttributeBehavior::className(),
+            'attributes' => [
+                ActiveRecord::EVENT_AFTER_INSERT => ['uuid']
+            ],
+            'value' => function ($event) {
+                return $event->sender->generateSlug();
+            }
+        ];
+<?php endif; ?>
+        return $behaviors;
     }
 
     /**
@@ -118,7 +164,10 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
      */
     public function rules()
     {
-        return [<?= "\n            " . implode(",\n            ", $rules) . ",\n        " ?>];
+        return [<?= "\n            " . implode(",\n            ", $rules) . ",\n        " ?>    // status rule
+            ['status', 'default', 'value' => self::STATUS_REVIEW],
+            ['status', 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_REVIEW, self::STATUS_REJECTED, self::STATUS_PUBLISHED]],
+        ];
     }
 
     /**
@@ -197,7 +246,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
             } elseif ($suggestion == 'block') {
                 $model->setRejected('');
             } elseif ($suggestion == 'review') { //人工审核，不做处理
-
+                return;
             }
         }
     }
@@ -338,11 +387,14 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
      */
     public static function getTotal($duration = null)
     {
-        $total = static::getDb()->cache(function ($db) {
+        $total = static::getDb()->cache(function (Connection $db) {
             return static::find()->count();
-        }, $duration);
+        }, $duration, new ChainedDependency([
+            'dependencies' => new DbDependency(['db' => self::getDb(), 'sql' => 'SELECT MAX(id) FROM ' . self::tableName()])
+        ]));
         return $total;
     }
+<?php if(isset($labels['created_at'])): ?>
 
     /**
      * 获取模型今日新增总数
@@ -351,10 +403,13 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') ?>
      */
     public static function getTodayTotal($duration = null)
     {
-        $total = static::getDb()->cache(function ($db) {
+        $total = static::getDb()->cache(function (Connection $db) {
             return static::find()->where(['between', 'created_at', DateHelper::todayFirstSecond(), DateHelper::todayLastSecond()])->count();
-        }, $duration);
+        }, $duration, new ChainedDependency([
+            'dependencies' => new DbDependency(['db' => self::getDb(), 'sql' => 'SELECT MAX(created_at) FROM ' . self::tableName()])
+        ]));
         return $total;
     }
+<?php endif; ?>
 <?php endif; ?>
 }
