@@ -143,7 +143,7 @@ class Nav extends Widget
             }
             $encodeLabel = isset ($item['encode']) ? $item['encode'] : $this->encodeLabels;
 
-            if ($item['parent'] == null) {//如果是顶级菜单
+            if (isset($item['parent']) && $item['parent'] == null) {//如果是顶级菜单
                 $item['label'] = $encodeLabel ? Html::tag('span', Html::encode($item['label']), ['class' => 'nav-label']) : $item['label'];
             } else {
                 $item['label'] = $encodeLabel ? Html::encode($item['label']) : $item['label'];
@@ -202,7 +202,7 @@ class Nav extends Widget
      */
     protected function renderItem($item)
     {
-        if ($item['parent'] == null && isset($item['items'])) {//如果是顶级菜单并且有子菜单
+        if (isset($item['parent']) && $item['parent'] == null && isset($item['items'])) {//如果是顶级菜单并且有子菜单
             $linkTemplate = '<a href="{url}">{icon} {label} <span class="fa arrow"></span></a>';
         } else {
             $linkTemplate = $this->linkTemplate;
